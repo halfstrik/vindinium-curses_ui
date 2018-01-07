@@ -5,15 +5,10 @@
 class Hero:
     """The Hero object"""
     def __init__(self, hero):
-        try:
-            # Training bots have no elo or userId
-            self.elo = hero['elo']
-            self.user_id = hero['userId']
-            self.bot_last_move = hero['lastDir']
-        except KeyError:
-            self.elo = 0
-            self.user_id = 0
-            self.last_move = None
+        # Training bots have no elo or userId
+        self.elo = hero.get('elo', 0)
+        self.user_id = hero.get('userId', 0)
+        self.last_dir = hero.get('lastDir', None)
 
         self.bot_id = hero['id']
         self.life = hero['life']
@@ -27,8 +22,7 @@ class Hero:
 
 
 class Game:
-    """The game object that gather
-    all game state informations"""
+    """The game object that gather all game state information"""
     def __init__(self, state):
         self.state = state
         self.mines = {}
@@ -64,18 +58,18 @@ class Game:
 
     def process_game(self, game):
         """Process the game data"""
-        process = {'board': self.process_board,
-                    'heroes': self.process_heroes}
         self.turn = game['turn']
         self.max_turns = game['maxTurns']
         self.finished = game['finished']
-        for key in sorted(game.keys()):  # TODO: board must go before heroes
-            if key in process:
-                process[key](game[key])
+
+        if 'board' in game.keys():
+            self.process_board(game['board'])
+        if 'heroes' in game.keys():
+            self.process_heroes(game['heroes'])
 
     def process_board(self, board):
-        """Process the board datas
-            - Retrieve walls locs, tavern locs
+        """Process the board data
+            - Retrieve walls locations, tavern locations
             - Converts tiles in a displayable form"""
         self.board_size = board['size']
         tiles = board['tiles']
@@ -113,7 +107,7 @@ class Game:
                         # I'm not a number, i'm a free bot:-)
                         self.heroes_locs.append(tile_coords)
                     else:
-                        # And I want to be differenciated
+                        # And I want to be differentiated
                         char = "@"
                 map_line = map_line + str(char)
             self.board_map.append(map_line)
