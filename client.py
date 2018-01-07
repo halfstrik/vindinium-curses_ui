@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import requests
-from bot import Curses_ui_bot
+from bot import CursesUIBot
 import ui
 import sys
 import select
@@ -16,7 +16,7 @@ TIMEOUT = 15
 
 class Config:
     def __init__(self, game_mode="training", server_url="http://vindinium.org",
-                       number_of_games=1, number_of_turns=300, map_name="m3", key=None):
+                 number_of_games=1, number_of_turns=300, map_name="m3", key=None):
         self.game_mode = game_mode
         self.number_of_games = number_of_games
         self.number_of_turns = number_of_turns
@@ -34,7 +34,7 @@ class Client:
         self.running = True
         self.game_url = None
         self.config = Config()
-        self.bot = Curses_ui_bot()  # Our bot
+        self.bot = CursesUIBot()  # Our bot
         self.states = []
         self.delay = 0.5  # Delay in s between turns in replay mode
         self.victory = 0
@@ -50,7 +50,6 @@ class Client:
             printable = printable + str(arg)+" "
         if kwargs and len(kwargs):
             a = 1
-            coma = ""
             printable = printable + "["
             for k, v in kwargs.items():
                 if 1 < a < len(kwargs):
@@ -177,7 +176,7 @@ class Client:
 
     def start_ui(self):
         """Start the curses UI"""
-        self.bot = Curses_ui_bot()
+        self.bot = CursesUIBot()
         self.running = True
         self.game_url = None
         self.states = []
@@ -265,7 +264,7 @@ class Client:
     def replay(self):
         """Replay last game"""
         # Restart with a new bot
-        self.bot = Curses_ui_bot()
+        self.bot = CursesUIBot()
         for i in range(self.config.number_of_games):
             # start a new game
             if self.bot.running:
@@ -285,7 +284,7 @@ class Client:
         # Delete prévious game states
         self.states = []
         # Restart game with brand new bot
-        self.bot = Curses_ui_bot()
+        self.bot = CursesUIBot()
         # Default move is no move !
         direction = "Stay"
         # Create a requests session that will be used throughout the game

@@ -10,7 +10,7 @@ DIRS = ["North", "East", "South", "West", "Stay"]
 ACTIONS = ["Go mine", "Go beer", "Go enemy"]
 
 
-class Curses_ui_bot:
+class CursesUIBot:
     """THis is your bot"""
     def __init__(self):
         self.running = True
@@ -90,4 +90,3 @@ class Curses_ui_bot:
             # First move has no previous move and no game
             pass
         self.game = Game(self.state)
-        
