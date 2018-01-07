@@ -182,7 +182,7 @@ class Client:
         self.game_url = None
         self.states = []
         self.state = None
-        self.gui = ui.tui()
+        self.gui = ui.TUI()
         choice = self.gui.ask_main_menu()
         if choice == '1':
             # Load config then play game
