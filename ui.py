@@ -10,7 +10,7 @@ try:
     # noinspection PyCompatibility
     from urllib.parse import urlparse
 except ImportError:
-    # noinspection PyCompatibility
+    # noinspection PyCompatibility,PyUnresolvedReferences
     from urlparse import urlparse
 import os
 
@@ -61,16 +61,25 @@ class TUI:
         self.SUMMARY_H = 7
         self.SUMMARY_W = 20
         self.data_win = None
+        self.data_pan = None
         self.map_win = None
+        self.map_pan = None
         self.path_win = None
+        self.path_pan = None
         self.log_win = None
+        self.log_pan = None
         self.help_win = None
+        self.help_pan = None
         self.players_win = None
+        self.players_pan = None
         self.time_win = None
+        self.time_pan = None
         self.menu_win = None
-        self.time_win = None
+        self.menu_pan = None
         self.summary_win = None
+        self.summary_pan = None
         self.input_win = None
+        self.input_pan = None
         self.log_entries = []
         self.stdscr = curses.initscr()
         curses.start_color()
@@ -173,7 +182,7 @@ class TUI:
         """Draw main data window"""
         self.data_win = curses.newwin(self.DATA_H, self.DATA_W, self.DATA_Y, self.DATA_X)
         self.data_win.box()
-        curses.panel.new_panel(self.data_win)
+        self.data_pan = curses.panel.new_panel(self.data_win)
         self.stdscr.addstr(self.DATA_Y - 1, self.DATA_X + 1, "Game", curses.A_BOLD)
         data_lines = ["Playing",
                       "Bot name",
@@ -212,14 +221,14 @@ class TUI:
         self.stdscr.addstr(self.LOG_Y - 1, self.LOG_X + 1, "Log", curses.A_BOLD)
         self.log_win = curses.newwin(self.LOG_H, self.LOG_W, self.LOG_Y, self.LOG_X)
         self.log_win.box()
-        curses.panel.new_panel(self.log_win)
+        self.log_pan = curses.panel.new_panel(self.log_win)
 
     def draw_path_win(self):
         """Draw path & heuristic window"""
         self.stdscr.addstr(self.PATH_Y - 1, self.PATH_X + 1, "Path and heuristic", curses.A_BOLD)
         self.path_win = curses.newwin(self.PATH_H, self.PATH_W, self.PATH_Y, self.PATH_X)
         self.path_win.box()
-        curses.panel.new_panel(self.path_win)
+        self.path_pan = curses.panel.new_panel(self.path_win)
         self.path_win.addstr(1, 1, "Heuristic", curses.A_BOLD)
         self.path_win.addstr(3, 1, "Path to goal", curses.A_BOLD)
         self.path_win.hline(2, 1, curses.ACS_HLINE, 64)
@@ -233,7 +242,7 @@ class TUI:
     def draw_help_win(self):
         """Draw help window"""
         self.help_win = curses.newwin(self.HELP_H, self.HELP_W, self.HELP_Y, self.HELP_X)
-        curses.panel.new_panel(self.help_win)
+        self.help_pan = curses.panel.new_panel(self.help_win)
         self.help_win.bkgd(curses.color_pair(4) + curses.A_REVERSE)
         self.help_win.addstr(0, 1, "Q", curses.A_BOLD + curses.A_STANDOUT)
         self.help_win.addstr(0, 2, "uit")
@@ -247,7 +256,7 @@ class TUI:
         self.stdscr.addstr(self.PLAYERS_Y - 1, self.PLAYERS_X + 1, "Players", curses.A_BOLD)
         self.players_win = curses.newwin(self.PLAYERS_H, self.PLAYERS_W, self.PLAYERS_Y, self.PLAYERS_X)
         self.players_win.box()
-        curses.panel.new_panel(self.players_win)
+        self.players_pan = curses.panel.new_panel(self.players_win)
         players_lines = ["Name",
                          "User ID",
                          "Bot ID",
@@ -285,7 +294,7 @@ class TUI:
         self.TIME_W = self.LOG_W + self.MAP_W + 4
         self.stdscr.addstr(self.TIME_Y - 1, self.TIME_X + 1, "Time line", curses.A_BOLD)
         self.time_win = curses.newwin(3, self.TIME_W, self.TIME_Y, self.TIME_X)
-        curses.panel.new_panel(self.time_win)
+        self.time_pan = curses.panel.new_panel(self.time_win)
         self.time_win.box()
         self.time_win.addstr(1, 1, " ", curses.color_pair(4) + curses.A_REVERSE)
 
@@ -293,7 +302,7 @@ class TUI:
         """Draw summary window"""
         self.stdscr.addstr(self.SUMMARY_Y - 1, self.SUMMARY_X + 1, "Games summary", curses.A_BOLD)
         self.summary_win = curses.newwin(self.SUMMARY_H, self.SUMMARY_W, self.SUMMARY_Y, self.SUMMARY_X)
-        curses.panel.new_panel(self.summary_win)
+        self.summary_pan = curses.panel.new_panel(self.summary_win)
         self.summary_win.box()
         self.summary_win.vline(1, 10, curses.ACS_VLINE, self.SUMMARY_H - 2)
         self.summary_win.addch(0, 10, curses.ACS_TTEE)
@@ -333,7 +342,7 @@ class TUI:
         else:
             # map doesn't exist
             self.map_win = curses.newwin(board_size + 2, board_size + 2, self.MAP_Y, self.MAP_X)
-            curses.panel.new_panel(self.map_win)
+            self.map_pan = curses.panel.new_panel(self.map_win)
             # Time line (Cost cpu time)
             self.draw_time_win()
             curses.panel.update_panels()
@@ -745,7 +754,7 @@ class TUI:
         offset = screen_x // 2 - 25
         self.menu_win.clear()
         self.menu_win.box()
-        curses.panel.new_panel(self.menu_win)
+        self.menu_pan = curses.panel.new_panel(self.menu_win)
         title1 = "__     ___           _ _       _"
         title2 = "\ \   / (_)_ __   __| (_)_ __ (_)_   _ _ __ ___"
         title3 = " \ \ / /| | '_ \ / _` | | '_ \| | | | | '_ ` _ \\"
@@ -816,7 +825,7 @@ class TUI:
         curses.textpad.rectangle(self.menu_win, 12, offset + 33, 14, offset + 42)
         self.input_win = self.menu_win.subwin(1, 8, 13, offset + 34)
         self.input_win.bkgd(curses.color_pair(4) + curses.A_REVERSE)
-        curses.panel.new_panel(self.input_win)
+        self.input_pan = curses.panel.new_panel(self.input_win)
         text_box = curses.textpad.Textbox(self.input_win)
         text_box.stripspaces = 1
         curses.panel.update_panels()
@@ -838,7 +847,7 @@ class TUI:
         curses.textpad.rectangle(self.menu_win, 12, offset + 25, 14, offset + 34)
         self.input_win = self.menu_win.subwin(1, 8, 13, offset + 26)
         self.input_win.bkgd(curses.color_pair(4) + curses.A_REVERSE)
-        curses.panel.new_panel(self.input_win)
+        self.input_pan = curses.panel.new_panel(self.input_win)
         text_box = curses.textpad.Textbox(self.input_win)
         text_box.stripspaces = 1
         curses.panel.update_panels()
@@ -865,7 +874,7 @@ class TUI:
         self.input_win = self.menu_win.subwin(1, 29, 13, offset + 19)
         self.input_win.bkgd(curses.color_pair(4) + curses.A_REVERSE)
         self.input_win.addstr(0, 0, server_url)
-        curses.panel.new_panel(self.input_win)
+        self.input_pan = curses.panel.new_panel(self.input_win)
         text_box = curses.textpad.Textbox(self.input_win)
         text_box.stripspaces = 1
         curses.panel.update_panels()
@@ -891,7 +900,7 @@ class TUI:
         curses.textpad.rectangle(self.menu_win, 12, offset + 18, 14, offset + 48)
         self.input_win = self.menu_win.subwin(1, 29, 13, offset + 19)
         self.input_win.bkgd(curses.color_pair(4) + curses.A_REVERSE)
-        curses.panel.new_panel(self.input_win)
+        self.input_pan = curses.panel.new_panel(self.input_win)
         text_box = curses.textpad.Textbox(self.input_win)
         text_box.stripspaces = 1
         curses.panel.update_panels()
@@ -913,7 +922,7 @@ class TUI:
         self.input_win = self.menu_win.subwin(1, 49, 13, offset + 6)
         self.input_win.bkgd(curses.color_pair(4) + curses.A_REVERSE)
         self.input_win.addstr(0, 0, file_url)
-        curses.panel.new_panel(self.input_win)
+        self.input_pan = curses.panel.new_panel(self.input_win)
         text_box = curses.textpad.Textbox(self.input_win)
         text_box.stripspaces = 1
         curses.panel.update_panels()
@@ -935,7 +944,7 @@ class TUI:
         self.input_win = self.menu_win.subwin(1, 49, 13, offset + 6)
         self.input_win.bkgd(curses.color_pair(4) + curses.A_REVERSE)
         self.input_win.addstr(0, 0, file_path)
-        curses.panel.new_panel(self.input_win)
+        self.input_pan = curses.panel.new_panel(self.input_win)
         text_box = curses.textpad.Textbox(self.input_win)
         text_box.stripspaces = 1
         curses.panel.update_panels()
