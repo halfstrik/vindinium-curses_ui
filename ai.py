@@ -13,7 +13,7 @@ import random
 class AI:
     """Pure random A.I, you may NOT use it to win ;-)"""
     def __init__(self):
-        pass
+        self.game = None
 
     def process(self, game):
         """Do whatever you need with the Game object game"""
@@ -53,8 +53,8 @@ class AI:
         actions = ['mine', 'tavern', 'fight']
 
         decisions = {'mine': [("Mine", 30), ('Fight', 10), ('Tavern', 5)],
-                    'tavern': [("Mine", 10), ('Fight', 10), ('Tavern', 50)],
-                    'fight': [("Mine", 15), ('Fight', 30), ('Tavern', 10)]}
+                     'tavern': [("Mine", 10), ('Fight', 10), ('Tavern', 50)],
+                     'fight': [("Mine", 15), ('Fight', 30), ('Tavern', 10)]}
 
         walkable = []
         path_to_goal = []
@@ -73,13 +73,11 @@ class AI:
         first_cell = self.game.hero.pos
         path_to_goal.append(first_cell)
 
-        for i in range(int(round(random.random()*self.game.board_size))):
+        for j in range(int(round(random.random() * self.game.board_size))):
             for i in range(len(walkable)):
                 random.shuffle(walkable)
-                if (walkable[i][0] - first_cell[0] == 1 and
-                        walkable[i][1] - first_cell[1] == 0) or \
-                        (walkable[i][1] - first_cell[1] == 1 and
-                        walkable[i][0] - first_cell[0] == 0):
+                if (walkable[i][0] - first_cell[0] == 1 and walkable[i][1] - first_cell[1] == 0) or \
+                   (walkable[i][1] - first_cell[1] == 1 and walkable[i][0] - first_cell[0] == 0):
                     path_to_goal.append(walkable[i])
                     first_cell = walkable[i]
                     break
